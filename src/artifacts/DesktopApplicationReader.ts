@@ -43,8 +43,9 @@ import type {
   AnalysisPartialObservation,
 } from "../domain/analysisErrorBase.js";
 import { BinaryTargetError } from "../domain/configurationErrors.js";
+import { sizeBudget } from "../config/unboundedMode.js";
 
-const RETAINED_METADATA_BYTES = 32 * 1024 * 1024;
+const RETAINED_METADATA_BYTES = sizeBudget(32 * 1024 * 1024);
 
 /** Stop traversal without discarding the preceding bounded observations. */
 class DesktopRepresentationLimit extends ArtifactReaderFailure {

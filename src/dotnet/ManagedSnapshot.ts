@@ -21,9 +21,10 @@ import { fixedAllowanceOptions } from "../domain/fixedAllowanceRemediation.js";
 import { ProviderCleanupError } from "../domain/providerCleanupError.js";
 import { RegularFileChangedError } from "../filesystem/RegularFile.js";
 import { readBoundedFileBytes } from "../process/BoundedFileBytes.js";
+import { sizeBudget } from "../config/unboundedMode.js";
 
 // Managed static inspection retains the complete PE snapshot in memory.
-export const MAX_MANAGED_SNAPSHOT_BYTES = 128 * 1024 * 1024;
+export const MAX_MANAGED_SNAPSHOT_BYTES = sizeBudget(128 * 1024 * 1024);
 
 interface ManagedSourceObservation {
   readonly byteLength: number;

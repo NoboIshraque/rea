@@ -4,6 +4,7 @@ import {
   fixedAllowanceRemediation,
   type FixedAllowanceKind,
 } from "../fixedAllowanceRemediation.js";
+import { deadlineDefault } from "../../config/unboundedMode.js";
 
 /** Largest delay Node honors as a timer rather than clamping to 1 ms. */
 export const MAX_NATIVE_TIMER_MS = 2_147_483_647;
@@ -12,13 +13,13 @@ export const MAX_NATIVE_TIMER_MS = 2_147_483_647;
  * Omitted `native_command_timeout_ms`. This is the macOS Xcode-tool wall
  * clock, not objdump/rizin `command_timeout_ms` (default 120000).
  */
-export const DEFAULT_NATIVE_COMMAND_TIMEOUT_MS = 60_000;
+export const DEFAULT_NATIVE_COMMAND_TIMEOUT_MS = deadlineDefault(60_000);
 
 /** Omitted `native_ui_deadline_ms` for one UI observation or scenario. */
-export const DEFAULT_NATIVE_UI_DEADLINE_MS = 180_000;
+export const DEFAULT_NATIVE_UI_DEADLINE_MS = deadlineDefault(180_000);
 
 /** Omitted `pwntools_timeout_ms` for one owned pwntools command. */
-export const DEFAULT_PWNTOOLS_TIMEOUT_MS = 30_000;
+export const DEFAULT_PWNTOOLS_TIMEOUT_MS = deadlineDefault(30_000);
 
 /**
  * One scenario wait step. The operation deadline is separate and adjustable;

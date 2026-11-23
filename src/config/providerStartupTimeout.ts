@@ -1,10 +1,11 @@
 import { z } from "zod";
+import { deadlineDefault } from "./unboundedMode.js";
 
 /** Default absolute deadline for Ghidra import, analysis, bridge, and readiness. */
-export const DEFAULT_GHIDRA_STARTUP_TIMEOUT_MS = 330_000;
+export const DEFAULT_GHIDRA_STARTUP_TIMEOUT_MS = deadlineDefault(330_000);
 
 /** Default absolute deadline for Hopper launch, analysis, bridge, and readiness. */
-export const DEFAULT_HOPPER_STARTUP_TIMEOUT_MS = 120_000;
+export const DEFAULT_HOPPER_STARTUP_TIMEOUT_MS = deadlineDefault(120_000);
 
 /** Default deadline for Darwin ownership-helper `swiftc` compilation. */
 /** Fresh Swift SDK cache took ~88s on the supported Intel macOS VM. */

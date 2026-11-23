@@ -1,14 +1,15 @@
 import { z } from "zod";
 
 import { absoluteLocalPathStringSchema } from "../localPath.js";
+import { budgetDefault, sizeBudget, sizeMaximum } from "../../config/unboundedMode.js";
 
 const uint = z.number().int().min(0).max(0xffffffff);
 const address = z.string().regex(/^0x[0-9a-f]+$/u);
 
 /** Hard ceiling on the caller-selected input read budget. */
-export const MAX_INSPECT_NATIVE_EXPORTS_FILE_BYTES = 536870912;
+export const MAX_INSPECT_NATIVE_EXPORTS_FILE_BYTES = sizeMaximum(536870912);
 /** Fixed bound on reported export rows, so one library cannot flood a reply. */
-export const MAX_NATIVE_EXPORT_ROWS = 262144;
+export const MAX_NATIVE_EXPORT_ROWS = sizeBudget(262144);
 
 /** One explicitly selected PE or ELF library or executable. */
 export const inspectNativeExportsInputSchema = z.strictObject({
@@ -20,7 +21,7 @@ export const inspectNativeExportsInputSchema = z.strictObject({
     .int()
     .min(64)
     .max(MAX_INSPECT_NATIVE_EXPORTS_FILE_BYTES)
-    .default(268435456)
+    .default(budgetDefault(268435456, MAX_INSPECT_NATIVE_EXPORTS_FILE_BYTES))
     .describe("Maximum stable artifact bytes to read (default 256 MiB)"),
 });
 export type InspectNativeExportsInput = z.infer<

@@ -2,14 +2,15 @@ import { z } from "zod";
 
 import { digestSchema } from "../digests.js";
 import { localPathStringSchema } from "../localPath.js";
+import { budgetDefault, sizeMaximum } from "../../config/unboundedMode.js";
 
 const uint = z.number().int().min(0).max(0xffffffff);
 const range = z.strictObject({ offset: uint, bytes: uint });
 
 /** Hard ceiling on the caller-selected input read budget. */
-export const MAX_INSPECT_ELF_NOTE_FILE_BYTES = 536870912;
+export const MAX_INSPECT_ELF_NOTE_FILE_BYTES = sizeMaximum(536870912);
 /** Hard ceiling on decoded note entries across every declared table. */
-export const MAX_INSPECT_ELF_NOTE_ENTRIES = 256;
+export const MAX_INSPECT_ELF_NOTE_ENTRIES = sizeMaximum(256);
 
 export const ELF_NOTE_TYPE_NAMES = [
   "gnu_abi_tag",
@@ -74,14 +75,14 @@ export const inspectElfNotesInputSchema = z.strictObject({
     .int()
     .min(64)
     .max(MAX_INSPECT_ELF_NOTE_FILE_BYTES)
-    .default(67108864)
+    .default(budgetDefault(67108864, MAX_INSPECT_ELF_NOTE_FILE_BYTES))
     .describe("Maximum stable artifact bytes to read (default 64 MiB)"),
   max_entries: z
     .number()
     .int()
     .min(1)
     .max(MAX_INSPECT_ELF_NOTE_ENTRIES)
-    .default(32)
+    .default(budgetDefault(32, MAX_INSPECT_ELF_NOTE_ENTRIES))
     .describe(
       "Maximum note entries to examine across every table; exceeding the budget fails without partial success",
     ),

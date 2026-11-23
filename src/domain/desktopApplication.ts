@@ -5,6 +5,7 @@ import {
   localPathStringSchema,
 } from "./localPath.js";
 import { artifactTraversalOmissionKindSchema } from "./artifactGraph.js";
+import { budgetDefault, sizeMaximum } from "../config/unboundedMode.js";
 
 export const desktopFamilySchema = z.enum([
   "dotnet",
@@ -17,13 +18,18 @@ export const desktopFamilySchema = z.enum([
 ]);
 export const inspectDesktopApplicationInputSchema = z.strictObject({
   path: absoluteLocalPathStringSchema,
-  max_entries: z.number().int().positive().max(100_000).default(20_000),
+  max_entries: z
+    .number()
+    .int()
+    .positive()
+    .max(sizeMaximum(100_000))
+    .default(budgetDefault(20_000, sizeMaximum(100_000))),
   max_probe_bytes: z
     .number()
     .int()
     .min(4096)
-    .max(64 * 1024 * 1024)
-    .default(8 * 1024 * 1024),
+    .max(sizeMaximum(64 * 1024 * 1024))
+    .default(budgetDefault(8 * 1024 * 1024, sizeMaximum(64 * 1024 * 1024))),
 });
 export type InspectDesktopApplicationInput = z.infer<
   typeof inspectDesktopApplicationInputSchema

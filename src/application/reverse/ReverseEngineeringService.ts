@@ -45,12 +45,13 @@ import {
 } from "../../process/OwnedCommand.js";
 import type { ProviderProcessSupervisor } from "../../process/ProviderProcess.js";
 import { absoluteCallerPath } from "../../filesystem/callerPath.js";
+import { sizeBudget } from "../../config/unboundedMode.js";
 
 export type ReverseEngineeringOperation =
   | "inspect_with_objdump"
   | "execute_rizin_command";
 
-const MAX_COMBINED_OUTPUT_BYTES = 16 * 1024 * 1024;
+const MAX_COMBINED_OUTPUT_BYTES = sizeBudget(16 * 1024 * 1024);
 // Eight concurrent captures bound retained provider output to 128 MiB.
 const MAX_CONCURRENT_REVERSE_ENGINEERING_OPERATIONS = 8;
 

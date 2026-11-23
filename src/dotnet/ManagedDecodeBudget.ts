@@ -4,9 +4,10 @@ import { jsonStringByteLength } from "../domain/jsonStringByteLength.js";
 
 import type { ManagedMetadataLayout } from "./ManagedMetadataLayout.js";
 import { managedFailure } from "./ManagedReaderFailure.js";
+import { sizeBudget } from "../config/unboundedMode.js";
 
 /** Per-inspection capacity for eagerly retained metadata and its JSON projection. */
-const MAX_METADATA_REPRESENTATION_BYTES = 64 * 1024 * 1024;
+const MAX_METADATA_REPRESENTATION_BYTES = sizeBudget(64 * 1024 * 1024);
 
 interface CachedString {
   readonly value: string;

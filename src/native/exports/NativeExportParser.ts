@@ -18,6 +18,7 @@ import {
   type NativeExports,
   type PeExport,
 } from "../../domain/native/nativeExports.js";
+import { sizeBudget } from "../../config/unboundedMode.js";
 
 type Artifact = NativeExports["artifact"];
 
@@ -29,7 +30,7 @@ const PE_EXPORT_DIRECTORY = 0;
 const PE_EXPORT_DIRECTORY_BYTES = 40;
 const MAXIMUM_NAME_BYTES = 4096;
 /** Text retained across all rows; names can repeat one long string table entry. */
-const MAXIMUM_RETAINED_TEXT_BYTES = 16 * 1024 * 1024;
+const MAXIMUM_RETAINED_TEXT_BYTES = sizeBudget(16 * 1024 * 1024);
 
 /** Charge every retained row and its text before it is stored. */
 const createRetention = () => {

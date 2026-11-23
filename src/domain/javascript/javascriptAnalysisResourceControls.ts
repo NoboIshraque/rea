@@ -1,26 +1,34 @@
+import { totalmem } from "node:os";
 import { z } from "zod";
+import { UNBOUNDED_MODE, budgetDefault, deadlineDefault, sizeMaximum } from "../../config/unboundedMode.js";
 
 /** Complete static checkpoint / per-script result transport ceiling. */
-export const JAVASCRIPT_STATIC_FACT_BYTES = 8 * 1024 * 1024;
+export const JAVASCRIPT_STATIC_FACT_BYTES = UNBOUNDED_MODE
+  ? 256 * 1024 * 1024
+  : 8 * 1024 * 1024;
 import type { JsonValue } from "../jsonValue.js";
 import type { ApplicationCoverage } from "./javascriptApplicationEvidenceSchemas.js";
 
+/** Unbounded mode: default analyzer heap is 60% of host memory (at least the bounded default). */
+const unboundedHeapMb = (): number =>
+  Math.max(1024, Math.floor((totalmem() / 1024 / 1024) * 0.6));
+
 /** Shared operational defaults for the isolated source-analysis boundary. */
 export const JAVASCRIPT_ANALYSIS_RESOURCE_DEFAULTS = {
-  heapMb: 1024,
-  timeoutMs: 300_000,
-  semanticNodes: 100_000,
-  semanticNodesPerFile: 20_000,
-  semanticUnknowns: 100_000,
-  semanticUnknownsPerFile: 20_000,
+  heapMb: UNBOUNDED_MODE ? unboundedHeapMb() : 1024,
+  timeoutMs: deadlineDefault(300_000),
+  semanticNodes: budgetDefault(100_000, Number.MAX_SAFE_INTEGER),
+  semanticNodesPerFile: budgetDefault(20_000, Number.MAX_SAFE_INTEGER),
+  semanticUnknowns: budgetDefault(100_000, Number.MAX_SAFE_INTEGER),
+  semanticUnknownsPerFile: budgetDefault(20_000, Number.MAX_SAFE_INTEGER),
 } as const;
 
 /** Inclusive `max_heap_mb` range. The worker reads it only when that process starts. */
 export const JAVASCRIPT_WORKER_HEAP_MIB_MINIMUM = 128;
-export const JAVASCRIPT_WORKER_HEAP_MIB_MAXIMUM = 16_384;
+export const JAVASCRIPT_WORKER_HEAP_MIB_MAXIMUM = UNBOUNDED_MODE ? 1_048_576 : 16_384;
 
 /** Maximum caller-selected retained record capacity; heap and transfer admission still apply. */
-export const JAVASCRIPT_SEMANTIC_ITEM_MAXIMUM = 1_000_000;
+export const JAVASCRIPT_SEMANTIC_ITEM_MAXIMUM = sizeMaximum(1_000_000);
 
 const HEAP_DOES_NOT_RAISE =
   "Raising max_heap_mb does not raise the parent result budget, transfer record or transfer file byte ceilings, the CLI/MCP process heap, or fixed parser limits.";

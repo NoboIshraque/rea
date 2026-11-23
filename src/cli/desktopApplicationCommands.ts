@@ -10,6 +10,7 @@ import { absoluteCallerPath } from "../filesystem/callerPath.js";
 import { CLI_COMMANDS } from "../cliCommandNames.js";
 import { logCliCommand } from "../cliLogging.js";
 import { withCommandCancellation } from "./commandCancellation.js";
+import { budgetDefault, sizeMaximum } from "../config/unboundedMode.js";
 
 /** One-shot complete Evidence can be saved and queried with inspect-analysis-view. */
 export const registerDesktopApplicationCommands = (
@@ -27,8 +28,8 @@ export const registerDesktopApplicationCommands = (
         .number()
         .int()
         .positive()
-        .max(100_000)
-        .default(20_000)
+        .max(sizeMaximum(100_000))
+        .default(budgetDefault(20_000, sizeMaximum(100_000)))
         .describe(
           "Maximum directory entries to examine; exhaustion leaves partial coverage",
         ),
@@ -37,8 +38,8 @@ export const registerDesktopApplicationCommands = (
         .number()
         .int()
         .min(4096)
-        .max(64 * 1024 * 1024)
-        .default(8 * 1024 * 1024)
+        .max(sizeMaximum(64 * 1024 * 1024))
+        .default(budgetDefault(8 * 1024 * 1024, sizeMaximum(64 * 1024 * 1024)))
         .describe("Maximum total bytes read from selected file ranges"),
     }),
     run: ({ args, options }) =>

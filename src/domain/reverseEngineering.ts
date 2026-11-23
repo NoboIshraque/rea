@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { commandEvidenceDetailSchema } from "./commandObservation.js";
+import { deadlineDefault } from "../config/unboundedMode.js";
 
 /** Omitted one-shot objdump/rizin wall clock. Preflight shares it; the command gets it again. */
-export const DEFAULT_REVERSE_COMMAND_TIMEOUT_MS = 120_000;
+export const DEFAULT_REVERSE_COMMAND_TIMEOUT_MS = deadlineDefault(120_000);
 /** Node timer ceiling. Larger deadlines would be clamped instead of honored. */
 export const MAX_REVERSE_COMMAND_TIMEOUT_MS = 2_147_483_647;
 
